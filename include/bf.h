@@ -16,6 +16,7 @@ public:
     pcl::PointCloud<pcl::PointXYZ>::Ptr raw_cloud_;
     double max_depth_ = 0;
     cv::Mat raw_image_;         //相机的彩色RGB图像
+    cv::Mat ground_truth_;      //基准深度图
     cv::Mat raw_image_gray_;    //相机图像的灰度图
     cv::Mat raw_projection_image_;  //激光雷达点云投影到相机图像上
     cv::Mat mask_;  //对每一个像素处理时候的掩膜
@@ -28,6 +29,7 @@ public:
         int y;
         double depth;
         double distance;
+        bool iscore = false;
     };
 public:
     BF(){};
@@ -35,6 +37,7 @@ public:
     void BFProcess();
     void Projection();
     float LocalBF(cv::Mat mask);
+    void Evaluation();
     void Image2cloud();
 };
 

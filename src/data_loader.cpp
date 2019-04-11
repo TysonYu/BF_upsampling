@@ -35,4 +35,7 @@ void ImageLoader::readKittiImage(int image_id_)
     ss << std::setw(10) << std::setfill('0') << image_id_ << ".png";
     std::string in_file = data_dir_ + "/image_02/data/" + ss.str();
     image_ = cv::imread(in_file, cv::IMREAD_COLOR);
+
+    std::string ground_truth_path = "/media/icey/TysonYu/dataset/data_depth_annotated/train/2011_09_26_drive_0001_sync/proj_depth/groundtruth/image_02/" + ss.str();
+    ground_truth_ = cv::imread(ground_truth_path, CV_LOAD_IMAGE_UNCHANGED);
 }

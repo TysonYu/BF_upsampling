@@ -62,6 +62,37 @@ float BF::LocalBF(cv::Mat mask)
                 v_point.emplace_back(point);
             }
         }
+    //  --------- DBSCAN ---------------------------------------------------
+    // std::vector< std::vector<point_> > Cluster;
+    // std::vector<point_> total_core;
+    // std::vector<point_> cluster_1;
+    // std::vector<point_> cluster_2;
+    //  找到所有的核
+    // for(int i = 0; i < v_point.size(); i++)
+    // {
+    //     int nearpoints = 0;
+    //     for(int j = 0; j < v_point.size(); j++)
+    //     {
+    //         if(j != i)
+    //         {
+    //             if(abs(v_point.at(i).depth - v_point.at(j).depth)/(v_point.at(i).depth + v_point.at(j).depth) < 0.2)   
+    //                 nearpoints ++;
+    //         }
+    //     }
+    //     if(nearpoints >= 2)
+    //         total_core.emplace_back(v_point.at(i));
+    // }
+    
+    // for(int i = 0; i < total_core.size(); i ++)
+    // {
+    //     if(abs(total_core.at(0).depth - total_core.at(i).depth) / (total_core.at(0).depth + total_core.at(i).depth) > 0.2)
+    //     {
+    //         // cout << "is edge" << endl;
+    //         return 0;
+    //     }
+    // }
+
+    //  --------- calculate ------------------------------------------------
     if(v_point.size() > 1)
     {
         sum = 0;
@@ -105,6 +136,24 @@ void BF::Image2cloud()
     result_cloud_ = result_cloud_rgb;
 }
 
+void BF::Evaluation()
+{
+    int count = 0;
+    float sum = 0;
+    float result = 0;
+    for(int i = 160; i < raw_image_.rows - 6; i++)
+        for(int j = 6; j < raw_image_.cols - 6; j++)
+        {
+            if(ground_truth_.at<ushort>(i,j) != 0 && raw_projection_image_.at<float>(i,j) != 0 && raw_projection_image_.at<float>(i,j) != INF)
+            {
+                sum += abs((float)ground_truth_.at<ushort>(i,j)/256.0 - raw_projection_image_.at<float>(i,j));
+                count ++;
+            }
+        }
+    result = sum / count;
+    cout << "average different = " << result << endl;
+}
+
 void BF::BFProcess()
 {
     Projection();
@@ -121,18 +170,18 @@ void BF::BFProcess()
                 
         }
     Image2cloud();
+    Evaluation();
+    // cv::Mat temp_1(raw_image_.rows, raw_image_.cols, CV_8U);//把点投影到M上
+    // for(int i = 0; i < result_depth_image_.rows; i++)
+    //     for(int j = 0; j < result_depth_image_.cols; j++)
+    //     {
+    //         if(result_depth_image_.at<float>(i,j) == INF)
+    //             temp_1.at<char>(i,j) = 255;
+    //         else
+    //             temp_1.at<char>(i,j) =  result_depth_image_.at<float>(i,j)/max_depth_ *255;
+    //     }
 
-    cv::Mat temp_1(raw_image_.rows, raw_image_.cols, CV_8U);//把点投影到M上
-    for(int i = 0; i < result_depth_image_.rows; i++)
-        for(int j = 0; j < result_depth_image_.cols; j++)
-        {
-            if(result_depth_image_.at<float>(i,j) == INF)
-                temp_1.at<char>(i,j) = 255;
-            else
-                temp_1.at<char>(i,j) =  result_depth_image_.at<float>(i,j)/max_depth_ *255;
-        }
-
-    cv::imshow("depthmap_1", temp_1);
-    cv::waitKey(0);
-    cv::destroyWindow("depthmap_1");
+    // cv::imshow("depthmap_1", temp_1);
+    // cv::waitKey(0);
+    // cv::destroyWindow("depthmap_1");
 }

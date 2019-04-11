@@ -15,9 +15,10 @@ int main(int argc, char **argv)
     ImageLoader::Ptr image_loader (new ImageLoader(data_file));
     Calibration::Ptr calibration (new Calibration);
 
-    pcl::visualization::PCLVisualizer viewer("result");//pcl viewer
+    // pcl::visualization::PCLVisualizer viewer("result");//pcl viewer
 
-    for(int i = 0; i < 153; i++)
+    
+    for(int i = 5; i < 6; i++)
     {
         cout << "========== fram number :" << i << "=============================" << endl;
         boost::timer timer;
@@ -28,18 +29,19 @@ int main(int argc, char **argv)
         bf->calibration_ = calibration;
         bf->raw_cloud_ = point_cloud_loader->raw_cloud_;
         bf->raw_image_ = image_loader->image_;
+        bf->ground_truth_ = image_loader->ground_truth_;
         bf->BFProcess();
         cout<<"total cost time: "<<timer.elapsed() <<endl;
 
         // cv::imshow("image", bf->raw_image_);
         // cv::waitKey(0);
         // cv::destroyWindow("image");
-        viewer.addPointCloud(bf->result_cloud_,to_string(i));
-        viewer.setBackgroundColor(0,0,0);
-        viewer.addCoordinateSystem();
-        viewer.spin();
-        viewer.removeCoordinateSystem();
-        viewer.removeAllPointClouds(); 
+        // viewer.addPointCloud(bf->result_cloud_,to_string(i));
+        // viewer.setBackgroundColor(0,0,0);
+        // viewer.addCoordinateSystem();
+        // viewer.spin();
+        // viewer.removeCoordinateSystem();
+        // viewer.removeAllPointClouds(); 
     }
 
     return 0;

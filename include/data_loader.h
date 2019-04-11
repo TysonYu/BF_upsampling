@@ -30,7 +30,7 @@ public:
     string data_dir_;
     int image_id_;
     cv::Mat image_;
-
+    cv::Mat ground_truth_;
 public:
     //  function
     ImageLoader();
